@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Puzzle Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="auth-modal" style="display: none;">
+        <div class="auth-modal-content">
+            <div class="auth-tabs">
+                <button id="loginTab" class="auth-tab active">Login</button>
+                <button id="signupTab" class="auth-tab">Sign Up</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <h2>Welcome Back!</h2>
+                <div class="form-group">
+                    <input type="text" id="loginUsername" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
+                <button id="loginBtn" class="auth-btn">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <h2>Create Account</h2>
+                <div class="form-group">
+                    <input type="text" id="signupUsername" placeholder="Username" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="signupEmail" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="signupPassword" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                </div>
+                <button id="signupBtn" class="auth-btn">Create Account</button>
+                <div id="signupError" class="error-message"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Image Puzzle Game</h1>
+            <div class="user-header" id="userHeader" style="display: none;">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">👤</div>
+                    <span class="username" id="displayUsername"></span>
+                </div>
+                <div class="header-controls">
+                    <button id="profileBtn" class="header-btn">Profile</button>
+                    <button id="logoutBtn" class="header-btn">Logout</button>
+                    <button id="guestLoginBtn" class="header-btn" style="display: none;">Login / Sign Up</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="upload-section">
+            <input type="file" id="imageUpload" accept="image/*">
+            <label for="imageUpload" class="upload-btn">Choose Image</label>
+            <div class="controls">
+                <select id="gridSize">
+                    <option value="3">3x3 (Easy)</option>
+                    <option value="4" selected>4x4 (Medium)</option>
+                    <option value="5">5x5 (Hard)</option>
+                </select>
+                <button id="shuffleBtn" disabled>Shuffle</button>
+                <button id="resetBtn" disabled>Reset</button>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <div class="original-preview">
+                <h3>Original Image</h3>
+                <div id="originalImage"></div>
+            </div>
+            
+            <div class="puzzle-container">
+                <div class="game-stats">
+                    <div class="timer-section">
+                        <h3>Timer</h3>
+                        <div id="timer" class="timer">00:00</div>
+                    </div>
+                    <div class="score-section">
+                        <h3>Best Times</h3>
+                        <div id="highScores" class="high-scores"></div>
+                    </div>
+                    <div class="puzzle-history-section" id="puzzleHistorySection" style="display: none;">
+                        <h3>Puzzle Progress</h3>
+                        <div class="puzzle-stats">
+                            <div class="stat">
+                                <span class="stat-number" id="totalSolved">0</span>
+                                <span class="stat-label">Solved</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="averageTime">-</span>
+                                <span class="stat-label">Avg Time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h3>Puzzle</h3>
+                <div id="puzzleGrid" class="puzzle-grid"></div>
+                <div id="winMessage" class="win-message hidden">
+                    🎉 Puzzle Solved! 🎉
+                    <div id="completionTime" class="completion-time"></div>
+                    <div id="newRecord" class="new-record hidden">🏆 New Record!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div id="profileModal" class="profile-modal hidden">
+        <div class="profile-modal-content">
+            <div class="profile-header">
+                <h2>User Profile</h2>
+                <button id="closeProfile" class="close-btn">&times;</button>
+            </div>
+            
+            <div class="profile-section">
+                <h3>Avatar</h3>
+                <div class="avatar-selection">
+                    <div class="avatar-option selected" data-avatar="👤">👤</div>
+                    <div class="avatar-option" data-avatar="🎮">🎮</div>
+                    <div class="avatar-option" data-avatar="🧩">🧩</div>
+                    <div class="avatar-option" data-avatar="🎯">🎯</div>
+                    <div class="avatar-option" data-avatar="🏆">🏆</div>
+                    <div class="avatar-option" data-avatar="⭐">⭐</div>
+                    <div class="avatar-option" data-avatar="🔥">🔥</div>
+                    <div class="avatar-option" data-avatar="💎">💎</div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3>Theme</h3>
+                <div class="theme-selection">
+                    <div class="theme-option selected" data-theme="default">
+                        <div class="theme-preview default-theme"></div>
+                        <span>Default</span>
+                    </div>
+                    <div class="theme-option" data-theme="dark">
+                        <div class="theme-preview dark-theme"></div>
+                        <span>Dark</span>
+                    </div>
+                    <div class="theme-option" data-theme="colorful">
+                        <div class="theme-preview colorful-theme"></div>
+                        <span>Colorful</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3>Statistics</h3>
+                <div class="user-stats">
+                    <div class="stat-item">
+                        <strong id="profileTotalSolved">0</strong>
+                        <span>Puzzles Solved</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong id="profileBestTime">-</strong>
+                        <span>Best Time (Overall)</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong id="profileAvgTime">-</strong>
+                        <span>Average Time</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong id="memberSince">-</strong>
+                        <span>Member Since</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3>Recent Puzzles</h3>
+                <div id="recentPuzzles" class="recent-puzzles">
+                    <div class="no-puzzles">No puzzles solved yet. Start playing to see your history!</div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button id="saveProfile" class="auth-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
